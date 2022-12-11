@@ -25,12 +25,21 @@ async function run() {
     const productCollection = client.db("emaJhon").collection("products");
     //setup api for getting all data from mongodb
     app.get("/products", async (req, res) => {
+      //get size and page
+      const page = req.query.page;
+      const size = req.query.size;
+      console.log(page, size);
       //all getting all data
       const query = {};
       const cursor = productCollection.find(query);
       //cursor er vitore je data gula ase seigula k to Array te convert korar jnne
       const products = await cursor.toArray();
-      res.send(products);
+      //if want to show only 10 products
+      // const products = await cursor.limit(10).toArray();
+
+      //use for pagination and count how much item available
+      const count = await productCollection.estimatedDocumentCount();
+      res.send({ count, products });
     });
   } finally {
   }
