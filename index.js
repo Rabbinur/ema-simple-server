@@ -26,14 +26,18 @@ async function run() {
     //setup api for getting all data from mongodb
     app.get("/products", async (req, res) => {
       //get size and page
-      const page = req.query.page;
-      const size = req.query.size;
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
       console.log(page, size);
       //all getting all data
       const query = {};
       const cursor = productCollection.find(query);
       //cursor er vitore je data gula ase seigula k to Array te convert korar jnne
-      const products = await cursor.toArray();
+      //page skip limit for pagination
+      const products = await cursor
+        .skip(page * size)
+        .limit(size)
+        .toArray();
       //if want to show only 10 products
       // const products = await cursor.limit(10).toArray();
 
